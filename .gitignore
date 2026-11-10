@@ -1,0 +1,4 @@
+*.p12
+*.pem
+*.b64.tmp
+.DS_Store
