@@ -1,4 +1,5 @@
-# Thin wrapper around the official OpenSign server image.
+# Server service for the Railway template: a thin wrapper around the official
+# OpenSign server image (this is the repo-root Dockerfile, auto-detected by Railway).
 # Bakes deployment defaults so the Railway template deploys with zero
 # required variables. All values can still be overridden with service
 # variables on Railway.
