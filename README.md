@@ -2,7 +2,7 @@
 
 One-click deploy of [OpenSign](https://github.com/OpenSignLabs/OpenSign), the open-source DocuSign alternative. Upload a PDF, place signature, date and text fields, send a signing link, and collect legally trackable signatures with a full audit trail and signing certificate — on your own Railway project.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/opensign-railway)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/opensign-railway-creator)
 
 ## What you get
 
@@ -24,26 +24,26 @@ The Client is deployed on its own public domain and calls the Server API cross-o
 
 ## Configuration (all pre-filled, nothing required)
 
-Variables you may want to change after deploying:
+Everything deploys with working defaults — there are no required inputs. The Server variables are generated per deployment from Railway template expressions:
 
 | Variable | Service | Default | Purpose |
 |---|---|---|---|
-| MASTER_KEY | Server | random 12-char secret | Parse Server master key |
-| MONGODB_URI | Server | composed from Mongo service references | Database connection |
+| MASTER_KEY | Server | random 12-char secret per deployment | Parse Server master key |
+| MONGODB_URI | Server | composed from the MongoDB service references (per-deploy credentials) | Database connection |
 | SERVER_URL | Server | public domain of Server + /app | Public API URL |
-| PFX_BASE64 | Server | bundled self-signed certificate | Signing certificate (base64 P12) |
-| PASS_PHRASE | Server | opensign | Passphrase for the bundled certificate |
-| USE_LOCAL | Server | true | Store documents on the Server volume instead of S3 |
 | REACT_APP_SERVERURL | Client | public domain of Server + /app | API URL baked into the client at boot |
+| MONGO_INITDB_ROOT_USERNAME / _PASSWORD | MongoDB | random secrets per deployment | Database root credentials |
+
+Fixed settings (local storage mode, the signing certificate and its passphrase) are baked into the Server start command, so they ship with the template but can be changed later in the Server service settings.
 
 Optional additions:
 
 - **Email notifications (SMTP)**: set SMTP_ENABLE=true, SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASS, SMTP_USER_EMAIL on the Server. Without mail config everything still signs — but sign-request and completion emails are not sent, so share signing links manually from the UI, and password reset is unavailable. Port 465 uses implicit TLS, any other port uses STARTTLS. Mailgun works too via MAILGUN_API_KEY, MAILGUN_DOMAIN, MAILGUN_SENDER.
-- **S3-compatible storage**: unset USE_LOCAL and set DO_SPACE, DO_ENDPOINT, DO_BASEURL, DO_ACCESS_KEY_ID, DO_SECRET_ACCESS_KEY, DO_REGION. The default uses the Server volume at /usr/src/app/files/files.
+- **S3-compatible storage**: remove USE_LOCAL from the Server start command and set DO_SPACE, DO_ENDPOINT, DO_BASEURL, DO_ACCESS_KEY_ID, DO_SECRET_ACCESS_KEY, DO_REGION. The default uses the Server volume at /usr/src/app/files/files.
 
 ## Notes on the signing certificate
 
-The template ships a shared self-signed P12 certificate so signing and certificate generation work immediately. It is fine for trials and internal use. For production, upload your own certificate per organization inside OpenSign (Organisation settings), which overrides the bundled one. The bundled certificate was generated with the commands in cert/generate.sh.
+The template ships a shared self-signed P12 certificate (baked into the Server start command as PFX_BASE64, passphrase opensign) so signing and certificate generation work immediately. It is fine for trials and internal use. For production, upload your own certificate per organization inside OpenSign (Organisation settings), which overrides the bundled one. The bundled certificate was generated with the commands in cert/generate.sh.
 
 # Deploy and Host
 
